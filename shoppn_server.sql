@@ -1,6 +1,9 @@
--- SERVER VERSION of shoppn_empty.sql: identical, but with the DROP TABLE
--- lines removed, for accounts that are not allowed to DROP (MySQL error #1142).
--- Import into a fresh, empty database.
+-- SERVER VERSION of shoppn_empty.sql, for restricted accounts on the school
+-- server (MySQL error #1142 "DROP/REFERENCES command denied"). Differences:
+--   * no DROP TABLE lines         (no DROP permission)
+--   * no FOREIGN KEY constraints  (no REFERENCES permission) - the indexes
+--     are kept; the PHP code must make sure ids are valid instead
+--   * CREATE TABLE IF NOT EXISTS  (safe to re-run after a partial import)
 -- ============================================================
 -- shoppn e-commerce database — CLEAN SLATE (schema only, no data)
 -- Import: phpMyAdmin → Import this file, OR:
@@ -33,21 +36,21 @@ SET NAMES utf8mb4;
 
 -- ── brands ──────────────────────────────────────────────────
 
-CREATE TABLE `brands` (
+CREATE TABLE IF NOT EXISTS `brands` (
   `brand_id` int(11) NOT NULL AUTO_INCREMENT,
   `brand_name` varchar(100) NOT NULL,
   PRIMARY KEY (`brand_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- ── categories ──────────────────────────────────────────────
-CREATE TABLE `categories` (
+CREATE TABLE IF NOT EXISTS `categories` (
   `cat_id` int(11) NOT NULL AUTO_INCREMENT,
   `cat_name` varchar(100) NOT NULL,
   PRIMARY KEY (`cat_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- ── customer ────────────────────────────────────────────────
-CREATE TABLE `customer` (
+CREATE TABLE IF NOT EXISTS `customer` (
   `customer_id` int(11) NOT NULL AUTO_INCREMENT,
   `customer_name` varchar(100) NOT NULL,
   `customer_email` varchar(50) NOT NULL,
@@ -62,7 +65,7 @@ CREATE TABLE `customer` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- ── products ────────────────────────────────────────────────
-CREATE TABLE `products` (
+CREATE TABLE IF NOT EXISTS `products` (
   `product_id` int(11) NOT NULL AUTO_INCREMENT,
   `product_cat` int(11) NOT NULL,
   `product_brand` int(11) NOT NULL,
@@ -73,48 +76,41 @@ CREATE TABLE `products` (
   `product_keywords` varchar(100) DEFAULT NULL,
   PRIMARY KEY (`product_id`),
   KEY `product_cat` (`product_cat`),
-  KEY `product_brand` (`product_brand`),
-  CONSTRAINT `products_ibfk_1` FOREIGN KEY (`product_cat`) REFERENCES `categories` (`cat_id`),
-  CONSTRAINT `products_ibfk_2` FOREIGN KEY (`product_brand`) REFERENCES `brands` (`brand_id`)
+  KEY `product_brand` (`product_brand`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- ── cart ────────────────────────────────────────────────────
-CREATE TABLE `cart` (
+CREATE TABLE IF NOT EXISTS `cart` (
   `p_id` int(11) NOT NULL,
   `ip_add` varchar(50) NOT NULL,
   `c_id` int(11) DEFAULT NULL,
   `qty` int(11) NOT NULL DEFAULT 1,
   KEY `p_id` (`p_id`),
-  KEY `c_id` (`c_id`),
-  CONSTRAINT `cart_ibfk_1` FOREIGN KEY (`p_id`) REFERENCES `products` (`product_id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `cart_ibfk_2` FOREIGN KEY (`c_id`) REFERENCES `customer` (`customer_id`) ON DELETE CASCADE ON UPDATE CASCADE
+  KEY `c_id` (`c_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- ── orders ──────────────────────────────────────────────────
-CREATE TABLE `orders` (
+CREATE TABLE IF NOT EXISTS `orders` (
   `order_id` int(11) NOT NULL AUTO_INCREMENT,
   `customer_id` int(11) NOT NULL,
   `invoice_no` int(11) NOT NULL,
   `order_date` date NOT NULL,
   `order_status` varchar(100) NOT NULL DEFAULT 'paid',
   PRIMARY KEY (`order_id`),
-  KEY `customer_id` (`customer_id`),
-  CONSTRAINT `orders_ibfk_1` FOREIGN KEY (`customer_id`) REFERENCES `customer` (`customer_id`)
+  KEY `customer_id` (`customer_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- ── orderdetails ────────────────────────────────────────────
-CREATE TABLE `orderdetails` (
+CREATE TABLE IF NOT EXISTS `orderdetails` (
   `order_id` int(11) NOT NULL,
   `product_id` int(11) NOT NULL,
   `qty` int(11) NOT NULL,
   KEY `order_id` (`order_id`),
-  KEY `product_id` (`product_id`),
-  CONSTRAINT `orderdetails_ibfk_1` FOREIGN KEY (`order_id`) REFERENCES `orders` (`order_id`),
-  CONSTRAINT `orderdetails_ibfk_2` FOREIGN KEY (`product_id`) REFERENCES `products` (`product_id`)
+  KEY `product_id` (`product_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- ── payment ─────────────────────────────────────────────────
-CREATE TABLE `payment` (
+CREATE TABLE IF NOT EXISTS `payment` (
   `pay_id` int(11) NOT NULL AUTO_INCREMENT,
   `amt` double NOT NULL,
   `customer_id` int(11) NOT NULL,
@@ -123,9 +119,7 @@ CREATE TABLE `payment` (
   `payment_date` date NOT NULL,
   PRIMARY KEY (`pay_id`),
   KEY `customer_id` (`customer_id`),
-  KEY `order_id` (`order_id`),
-  CONSTRAINT `payment_ibfk_1` FOREIGN KEY (`customer_id`) REFERENCES `customer` (`customer_id`),
-  CONSTRAINT `payment_ibfk_2` FOREIGN KEY (`order_id`) REFERENCES `orders` (`order_id`)
+  KEY `order_id` (`order_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 COMMIT;
