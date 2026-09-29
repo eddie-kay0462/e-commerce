@@ -33,10 +33,22 @@ if (session_status() === PHP_SESSION_NONE) {
 
 date_default_timezone_set('Africa/Accra');
 
-// The URL of the project folder, used to build links and redirects
-// that work from any page, however deep in the folders it is.
-// Change this if your project folder has a different name.
-define('BASE_URL', '/ecomlab/');
+// BASE_URL = the web address of the project folder, used to build links
+// and redirects that work from any page, however deep in the folders it is.
+// It is worked out automatically, so the same code works on your laptop
+// (/ecomlab/) and on the server (/~faculty/e-commerce-labs/shoppn/).
+//
+// How: compare the running script's path on disk with its path in the URL.
+//   on disk:  /home/faculty/public_html/e-commerce-labs/shoppn/views/login.php
+//   project:  /home/faculty/public_html/e-commerce-labs/shoppn
+//   so the part inside the project is:                        /views/login.php
+//   URL path: /~faculty/e-commerce-labs/shoppn/views/login.php
+//   cut that same part off the URL  -> /~faculty/e-commerce-labs/shoppn/
+$project_dir = realpath(__DIR__ . '/..');                          // folder above core/
+$script_file = realpath($_SERVER['SCRIPT_FILENAME']);              // e.g. .../views/login.php
+$inside      = substr($script_file, strlen($project_dir));         // "/views/login.php"
+$base        = substr($_SERVER['SCRIPT_NAME'], 0, -strlen($inside)); // "/~faculty/.../shoppn"
+define('BASE_URL', $base . '/');
 
 // The database base class, so any file that includes core.php can
 // also create Model classes.
