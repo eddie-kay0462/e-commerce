@@ -1,0 +1,27 @@
+# Database credentials - every developer keeps their own copy.
+# Copy core/db_cred.example.php to core/db_cred.php and fill it in.
+core/db_cred.php
+
+# Error logs (Task 2: error/error.log)
+error/*.log
+*.log
+
+# User uploads (product and customer images) - these are data, not code
+images/products/*
+images/customers/*
+
+# macOS / Windows system files
+.DS_Store
+Thumbs.db
+
+# Editor / IDE settings
+.vscode/
+.idea/
+*.swp
+
+# Dependencies (if Composer or npm is ever added)
+vendor/
+node_modules/
+
+# Environment files
+.env

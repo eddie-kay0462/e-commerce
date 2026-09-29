@@ -1,7 +1,9 @@
 <?php
 
-// Pull in the connection settings (DATABASE, SERVER, USERNAME, PASSWD constants)
-require_once "db_cred.php";
+// Pull in the connection settings (DB_HOST, DB_USER, DB_PASS, DB_NAME constants).
+// __DIR__ is the folder this file lives in, so the path works no matter
+// which page included us.
+require_once __DIR__ . "/db_cred.php";
 
 // Database is the base class every "model" class (like Customer) should extend.
 // It knows how to connect to MySQL and how to run queries safely (using
@@ -17,10 +19,10 @@ class Database
     // These properties are set from the constants defined in db_cred.php.
     // Using properties (instead of the constants directly) makes it easy
     // to override them later if a subclass ever needs a different database.
-    private $host = SERVER;
-    private $dbname = DATABASE;
-    private $username = USERNAME;
-    private $password = PASSWD;
+    private $host = DB_HOST;
+    private $dbname = DB_NAME;
+    private $username = DB_USER;
+    private $password = DB_PASS;
 
     // The constructor runs automatically whenever `new Database()` (or
     // `new Customer()`, since Customer extends Database) is called.
