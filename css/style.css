@@ -87,7 +87,8 @@ body {
 .field { margin-bottom: 14px; }
 .field label { display: block; margin-bottom: 4px; font-weight: 600; }
 .field input,
-.field select {
+.field select,
+.field textarea {
 	width: 100%;
 	box-sizing: border-box;
 	padding: 8px;
@@ -119,3 +120,50 @@ button:disabled { opacity: 0.6; cursor: wait; }
 .data-table { width: 100%; border-collapse: collapse; background: #fff; }
 .data-table th,
 .data-table td { border: 1px solid #d9dde1; padding: 6px 8px; text-align: left; }
+
+/* Product pages */
+.thumb { width: 48px; height: 48px; object-fit: cover; border-radius: 4px; display: block; }
+
+/* Search bar: sits on one line, wraps on small screens */
+.filters { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 16px; }
+.filters input,
+.filters select { padding: 8px; border: 1px solid #c7ccd1; border-radius: 4px; font-size: 1rem; }
+.filters input { flex: 1 1 200px; }
+
+/* As many 200px-wide cards per row as fit */
+.product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px; }
+.product-card {
+	display: flex;
+	flex-direction: column;
+	background: #fff;
+	border: 1px solid #d9dde1;
+	border-radius: 8px;
+	overflow: hidden;
+	color: inherit;
+	text-decoration: none;
+}
+.product-card:hover { box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12); }
+.product-card img,
+.product-card .no-image { width: 100%; aspect-ratio: 1; object-fit: cover; }
+.product-info { display: flex; flex-direction: column; gap: 2px; padding: 10px 12px; }
+.product-title { font-weight: 600; }
+.product-price { font-weight: 700; color: #1e4d3a; }
+
+.no-image {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background: #eceeea;
+	color: #6b7280;
+	font-size: 0.875rem;
+}
+
+/* Single product: image left, details right (stacked on phones) */
+.product-detail { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+.product-detail img,
+.product-detail .no-image { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 8px; }
+.product-detail h1 { margin-top: 0; }
+.product-detail .product-price { font-size: 1.4rem; }
+@media (max-width: 600px) {
+	.product-detail { grid-template-columns: 1fr; }
+}

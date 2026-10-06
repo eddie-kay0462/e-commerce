@@ -8,6 +8,7 @@ error/*.log
 
 # User uploads (product and customer images) - these are data, not code
 images/products/*
+!images/products/.gitkeep
 images/customers/*
 
 # macOS / Windows system files

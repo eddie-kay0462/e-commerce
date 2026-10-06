@@ -5,6 +5,6 @@ require __DIR__ . '/layout/header.php';
 ?>
 
 <h1>Welcome to Shoppn</h1>
-<p>Products will appear here from Task 10 onwards.</p>
+<p><a href="all_products.php">Browse all products &rarr;</a></p>
 
 <?php require __DIR__ . '/layout/footer.php'; ?>

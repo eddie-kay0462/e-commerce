@@ -100,6 +100,65 @@ function require_admin()
     }
 }
 
+// Save an uploaded product image into images/products/.
+// $file is one entry of $_FILES, e.g. $_FILES['product_image'].
+// Returns [path, error]:
+//   [null, null]                           no file was chosen (that's allowed)
+//   ['images/products/product_ab12.jpg', null]  saved - store this path in the database
+//   [null, 'message']                      something was wrong with the file
+function upload_product_image($file)
+{
+    if (!isset($file['error']) || $file['error'] === UPLOAD_ERR_NO_FILE) {
+        return [null, null];
+    }
+    if ($file['error'] !== UPLOAD_ERR_OK) {
+        return [null, 'The image could not be uploaded. Please try again.'];
+    }
+    if ($file['size'] > 2 * 1024 * 1024) {
+        return [null, 'The image must be 2MB or smaller.'];
+    }
+
+    // Check what the file REALLY is by reading its contents. The file name
+    // and the browser's "type" can be faked, e.g. evil.php renamed to cat.jpg.
+    // We also pick the extension ourselves, so a .php file can never be saved.
+    $allowed = [
+        'image/jpeg' => 'jpg',
+        'image/png'  => 'png',
+        'image/gif'  => 'gif',
+        'image/webp' => 'webp',
+    ];
+    $mime = (new finfo(FILEINFO_MIME_TYPE))->file($file['tmp_name']);
+    if (!isset($allowed[$mime])) {
+        return [null, 'The image must be a JPG, PNG, GIF or WEBP file.'];
+    }
+
+    $folder = __DIR__ . '/../images/products';
+    if (!is_dir($folder) && !mkdir($folder, 0755, true)) {
+        return [null, 'The images/products folder is missing and could not be created.'];
+    }
+
+    // A random name, so two uploads called "photo.jpg" don't overwrite each other
+    $name = 'product_' . bin2hex(random_bytes(8)) . '.' . $allowed[$mime];
+
+    if (!move_uploaded_file($file['tmp_name'], $folder . '/' . $name)) {
+        return [null, 'The image could not be saved on the server.'];
+    }
+
+    return ['images/products/' . $name, null];
+}
+
+// Delete a product image that is no longer used (e.g. after it was replaced).
+// Only files inside images/products/ can be deleted.
+function delete_product_image($path)
+{
+    if ($path && strpos($path, 'images/products/') === 0) {
+        $full = __DIR__ . '/../' . $path;
+        if (is_file($full)) {
+            unlink($full);
+        }
+    }
+}
+
 // TODO: session timeout
 // Track the time of the last request. If too much time has passed
 // since then, log the user out automatically.

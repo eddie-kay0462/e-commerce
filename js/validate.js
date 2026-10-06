@@ -118,3 +118,52 @@ if (loginForm) {
 		setLoading(document.getElementById('login-btn'), 'Logging in...');
 	});
 }
+
+// ---- Product form (views/admin/product.php) ----
+var productForm = document.getElementById('product-form');
+
+if (productForm) {
+	productForm.addEventListener('submit', function (e) {
+		clearErrors(productForm);
+		var ok = true;
+
+		if (val('product_cat') === '') {
+			showError('product_cat', 'Please choose a category.');
+			ok = false;
+		}
+		if (val('product_brand') === '') {
+			showError('product_brand', 'Please choose a brand.');
+			ok = false;
+		}
+		if (val('product_title') === '') {
+			showError('product_title', 'Please enter a title.');
+			ok = false;
+		}
+		// parseFloat turns the text "12.50" into the number 12.5 (or NaN if it isn't a number)
+		var price = parseFloat(val('product_price'));
+		if (isNaN(price) || price <= 0) {
+			showError('product_price', 'Price must be a number greater than 0.');
+			ok = false;
+		}
+
+		// .files[0] is the chosen file (undefined if none). The image is optional.
+		var image = document.getElementById('product_image').files[0];
+		if (image) {
+			var types = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+			if (types.indexOf(image.type) === -1) {
+				showError('product_image', 'The image must be a JPG, PNG, GIF or WEBP file.');
+				ok = false;
+			} else if (image.size > 2 * 1024 * 1024) {
+				showError('product_image', 'The image must be 2MB or smaller.');
+				ok = false;
+			}
+		}
+
+		if (!ok) {
+			e.preventDefault();
+			return;
+		}
+
+		setLoading(document.getElementById('product-btn'), 'Saving...');
+	});
+}
