@@ -35,4 +35,34 @@ class ProductClass extends Database
             [$name, $id]
         );
     }
+
+    // Add a category. Returns true/false.
+    public function addCategory($name)
+    {
+        return $this->execute(
+            "INSERT INTO categories (cat_name) VALUES (?)",
+            [$name]
+        );
+    }
+
+    // Every category, A-Z. Returns an array of rows (empty if none).
+    public function getAllCategories()
+    {
+        return $this->fetchAll("SELECT * FROM categories ORDER BY cat_name ASC");
+    }
+
+    // One category by id. Returns the row, or false if it doesn't exist.
+    public function getCategoryById($id)
+    {
+        return $this->fetchOne("SELECT * FROM categories WHERE cat_id = ?", [$id]);
+    }
+
+    // Rename a category. Returns true/false.
+    public function updateCategory($id, $name)
+    {
+        return $this->execute(
+            "UPDATE categories SET cat_name = ? WHERE cat_id = ?",
+            [$name, $id]
+        );
+    }
 }

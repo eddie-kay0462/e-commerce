@@ -35,4 +35,24 @@ class ProductController
     {
         return $this->product->updateBrand($id, $name);
     }
+
+    public function addCategory($name)
+    {
+        return $this->product->addCategory($name);
+    }
+
+    public function getAllCategories()
+    {
+        return $this->product->getAllCategories();
+    }
+
+    public function getCategoryById($id)
+    {
+        return $this->product->getCategoryById($id);
+    }
+
+    public function updateCategory($id, $name)
+    {
+        return $this->product->updateCategory($id, $name);
+    }
 }
