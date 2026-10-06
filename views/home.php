@@ -5,6 +5,6 @@ require __DIR__ . '/layout/header.php';
 ?>
 
 <h1>Welcome to Shoppn</h1>
-<p><a href="all_products.php">Browse all products &rarr;</a></p>
+<p><a href="<?php echo BASE_URL; ?>views/all_products.php">Browse all products &rarr;</a></p>
 
 <?php require __DIR__ . '/layout/footer.php'; ?>
